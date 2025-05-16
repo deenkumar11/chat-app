@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-gray-300 min-h-screen flex flex-col items-center justify-start pt-12">
+
+    <h1 class="text-4xl font-semibold text-gray-800 mb-8">My Todo List</h1>
+     <div id="message-box" class="w-full max-w-md mb-4 p-2 text-center text-red-500 font-semibold rounded-md border border-red-500/50 hidden">
+    </div>
+
+    <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-6">
+        <div class="flex items-center mb-4">
+            <input type="text" id="todo-input" placeholder="Add a new task..." class="flex-grow rounded-l-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-2">
+            <button id="add-button" class="bg-blue-500 hover:bg-blue-600 text-white rounded-r-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-circle"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+            </button>
+        </div>
+        <ul id="todo-list" class="space-y-3">
+            </ul>
+    </div>
+
+    <script>
+        const todoInput = document.getElementById('todo-input');
+        const addButton = document.getElementById('add-button');
+        const todoList = document.getElementById('todo-list');
+        const messageBox = document.getElementById('message-box');
+
+        // Function to add a new task
+        function addTask() {
+            const taskText = todoInput.value.trim();
+
+            if (taskText === '') {
+                showMessage('Please enter a task!');
+                return;
+            }
+
+            hideMessage();
+
+            const listItem = document.createElement('li');
+            listItem.className = "flex items-center justify-between bg-gray-50 p-3 rounded-lg";
+
+            const checkbox = document.createElement('input');
+            checkbox.type = "checkbox";
+            checkbox.className = "mr-2 rounded-md text-blue-500 focus:ring-blue-500 h-5 w-5";
+            checkbox.addEventListener('change', toggleComplete);
+
+            const taskSpan = document.createElement('span');
+            taskSpan.textContent = taskText;
+            taskSpan.className = "flex-grow";
+
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-circle text-gray-400 hover:text-red-500 transition-colors duration-200"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>`;
+            deleteButton.className = "p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500";
+            deleteButton.addEventListener('click', deleteTask);
+
+            const leftContainer = document.createElement('div');
+            leftContainer.className = 'flex items-center';
+            leftContainer.appendChild(checkbox);
+            leftContainer.appendChild(taskSpan);
+
+            listItem.appendChild(leftContainer);
+            listItem.appendChild(deleteButton);
+            todoList.appendChild(listItem);
+
+            todoInput.value = ''; // Clear the input
+        }
+
+        // Function to mark a task as complete/incomplete
+        function toggleComplete(event) {
+            const listItem = event.target.closest('li'); // Find the parent <li>
+             const taskSpan = listItem.querySelector('span');
+            listItem.classList.toggle('completed');
+             if (listItem.classList.contains('completed')) {
+                taskSpan.classList.add('line-through', 'text-gray-400');
+             }else{
+                taskSpan.classList.remove('line-through', 'text-gray-400');
+             }
+
+        }
+
+        // Function to delete a task
+        function deleteTask(event) {
+            const listItem = event.target.closest('li');  // Find the parent <li>
+            listItem.remove();
+        }
+
+        // Function to display a message
+        function showMessage(message) {
+            messageBox.textContent = message;
+            messageBox.classList.remove('hidden');
+        }
+
+        // Function to hide the message
+        function hideMessage() {
+            messageBox.classList.add('hidden');
+            messageBox.textContent = ''; // Clear message
+        }
+
+        // Event Listeners
+        addButton.addEventListener('click', addTask);
+        todoInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                addTask();
+            }
+        });
+    </script>
+</body>
+</html>
